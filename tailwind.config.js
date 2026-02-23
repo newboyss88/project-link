@@ -7,30 +7,22 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['"Outfit"', 'sans-serif'],
+                sans: ['"Inter"', 'system-ui', 'sans-serif'], // Or 'San Francisco', Inter is a great alternative
             },
             colors: {
-                'glass-border': 'rgba(255, 255, 255, 0.08)',
-                'glass-bg': 'rgba(255, 255, 255, 0.03)',
-                'neon-purple': '#b0fb5d', // Actually acts as a contrast accent
-                'deep-bg': '#050505',
+                'bento-bg': '#f5f7fa',
+                'card-white': 'rgba(255, 255, 255, 0.9)',
+                'text-primary': '#1d1d1f',
+                'text-secondary': '#86868b',
+                // Card specifics
+                'card-purple': '#f3e8ff', // Vibe Coding
+                'card-pink': '#fae8ff',   // Framer
+                'card-peach': '#ffedd5',  // Insan
+                'card-gray': '#f3f4f6',   // Portfolio
             },
-            animation: {
-                'blob': 'blob 7s infinite',
-                'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            },
-            keyframes: {
-                blob: {
-                    '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                    '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                    '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                    '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                },
-                fadeInUp: {
-                    '0%': { opacity: '0', transform: 'translateY(20px)' },
-                    '100%': { opacity: '1', transform: 'translateY(0)' },
-                }
+            boxShadow: {
+                'bento': '0 10px 40px -10px rgba(0,0,0,0.05)',
+                'bento-hover': '0 20px 40px -10px rgba(0,0,0,0.1)',
             }
         },
     },
