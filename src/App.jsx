@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import MatrixRain from './components/MatrixRain';
+import CursorTrail from './components/CursorTrail';
 import ScrambleText from './components/ScrambleText';
 import RotatingTitle from './components/RotatingTitle';
 import profilePic from './assets/baralov.jpg';
@@ -15,6 +16,25 @@ const TRACKS = [
   { id: 'RgKAFK5djSk', title: 'Wiz Khalifa — See You Again' },
   { id: 'JGwWNGJdvx8', title: 'Ed Sheeran — Shape of You' },
   { id: 'fJ9rUzIMcZQ', title: 'Queen — Bohemian Rhapsody' },
+  { id: 'hT_nvWreIhg', title: 'OneRepublic — Counting Stars' },
+  { id: 'YQHsXMglC9A', title: 'Adele — Hello' },
+  { id: 'CevxZvSJLk8', title: 'Katy Perry — Roar' },
+  { id: '09R8_2nJtjg', title: 'Maroon 5 — Sugar' },
+  { id: 'OPf0YbXqDm0', title: 'Mark Ronson — Uptown Funk' },
+  { id: 'pRpeEdMmmQ0', title: 'Shakira — Waka Waka' },
+  { id: 'hLQl3WQQoQ0', title: 'Adele — Someone Like You' },
+  { id: 'lp-EO5I60KA', title: 'Eminem — Lose Yourself' },
+  { id: '7wtfhZwyrcc', title: 'Billie Eilish — Bad Guy' },
+  { id: 'SlPhMPnQ58k', title: 'Maroon 5 — Payphone' },
+  { id: 'PT2_F-1esPk', title: 'The Weeknd — Blinding Lights' },
+  { id: 'KDKva-s_bzE', title: 'Doja Cat — Say So' },
+  { id: 'gCYcHz2k5x0', title: 'Martin Garrix — Animals' },
+  { id: 'IcrbM1l_BoI', title: 'Coldplay — Something Just Like This' },
+  { id: 'bo_efYhYU2A', title: 'Sia — Cheap Thrills' },
+  { id: 'papuvlVeZg8', title: 'NF — Let You Down' },
+  { id: 'n1WpP7iowLc', title: 'Imagine Dragons — Radioactive' },
+  { id: 'W-TE_Ys4iwM', title: 'Dua Lipa — Levitating' },
+  { id: 'e-ORhEE9VVg', title: 'Taylor Swift — Blank Space' },
 ];
 
 function App() {
@@ -116,7 +136,10 @@ function App() {
   }, { scope: containerRef });
 
   return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden font-mono bg-black text-green-400">
+    <div ref={containerRef} className="relative h-screen overflow-hidden font-mono bg-black text-green-400 cursor-none">
+
+      {/* ===== CURSOR SPARKLE TRAIL ===== */}
+      <CursorTrail />
 
       {/* ===== BACKGROUND: Profile Picture (darkened, green-tinted) ===== */}
       <div className="fixed inset-0 -z-10" style={{ transition: 'transform 0.8s ease-out' }}>
@@ -245,7 +268,7 @@ function App() {
 
         {/* Bottom Right: Scramble Text */}
         <div className="font-mono text-base md:text-xl text-green-300/80 md:max-w-md text-left md:text-right transition-all duration-300 hover:drop-shadow-[0_0_20px_rgba(74,222,128,0.6)] hover:text-green-300">
-          <ScrambleText text="sun'iy intellekt va kriptoning kelajagini qurmoqdaman. bir prompt bilan." />
+          <ScrambleText text="kodlar orqali dunyoni o'zgartiraman. har bir satr — yangi imkoniyat." />
         </div>
       </div>
 
@@ -260,7 +283,7 @@ function App() {
         <a href="https://linkedin.com/in/botir-aralov-a93187284" target="_blank" rel="noopener noreferrer" className="text-green-400 transition-all duration-300 hover:drop-shadow-[0_0_20px_rgba(74,222,128,0.6)] hover:text-green-300 hover:scale-125">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:w-[26px] md:h-[26px]"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
         </a>
-        <a href="mailto:botir@svaj.uz" className="text-green-400 transition-all duration-300 hover:drop-shadow-[0_0_20px_rgba(74,222,128,0.6)] hover:text-green-300 hover:scale-125">
+        <a href="mailto:aralovbotir88@gmail.com" className="text-green-400 transition-all duration-300 hover:drop-shadow-[0_0_20px_rgba(74,222,128,0.6)] hover:text-green-300 hover:scale-125">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:w-[26px] md:h-[26px]"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
         </a>
         <a href="https://t.me/wwuzbww" target="_blank" rel="noopener noreferrer" className="text-green-400 transition-all duration-300 hover:drop-shadow-[0_0_20px_rgba(74,222,128,0.6)] hover:text-green-300 hover:scale-125">
