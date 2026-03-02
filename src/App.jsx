@@ -8,46 +8,25 @@ import RotatingTitle from './components/RotatingTitle';
 import profilePic from './assets/baralov.jpg';
 import './index.css';
 
-// YouTube video IDs — trending/popular tracks
-const TRACKS = [
-  { id: 'dQw4w9WgXcQ', title: 'Rick Astley — Never Gonna Give You Up' },
-  { id: 'kJQP7kiw5Fk', title: 'Luis Fonsi — Despacito' },
-  { id: '60ItHLz5WEA', title: 'Alan Walker — Faded' },
-  { id: 'RgKAFK5djSk', title: 'Wiz Khalifa — See You Again' },
-  { id: 'JGwWNGJdvx8', title: 'Ed Sheeran — Shape of You' },
-  { id: 'fJ9rUzIMcZQ', title: 'Queen — Bohemian Rhapsody' },
-  { id: 'hT_nvWreIhg', title: 'OneRepublic — Counting Stars' },
-  { id: 'YQHsXMglC9A', title: 'Adele — Hello' },
-  { id: 'CevxZvSJLk8', title: 'Katy Perry — Roar' },
-  { id: '09R8_2nJtjg', title: 'Maroon 5 — Sugar' },
-  { id: 'OPf0YbXqDm0', title: 'Mark Ronson — Uptown Funk' },
-  { id: 'pRpeEdMmmQ0', title: 'Shakira — Waka Waka' },
-  { id: 'hLQl3WQQoQ0', title: 'Adele — Someone Like You' },
-  { id: 'lp-EO5I60KA', title: 'Eminem — Lose Yourself' },
-  { id: '7wtfhZwyrcc', title: 'Billie Eilish — Bad Guy' },
-  { id: 'SlPhMPnQ58k', title: 'Maroon 5 — Payphone' },
-  { id: 'PT2_F-1esPk', title: 'The Weeknd — Blinding Lights' },
-  { id: 'KDKva-s_bzE', title: 'Doja Cat — Say So' },
-  { id: 'gCYcHz2k5x0', title: 'Martin Garrix — Animals' },
-  { id: 'IcrbM1l_BoI', title: 'Coldplay — Something Just Like This' },
-  { id: 'bo_efYhYU2A', title: 'Sia — Cheap Thrills' },
-  { id: 'papuvlVeZg8', title: 'NF — Let You Down' },
-  { id: 'n1WpP7iowLc', title: 'Imagine Dragons — Radioactive' },
-  { id: 'W-TE_Ys4iwM', title: 'Dua Lipa — Levitating' },
-  { id: 'e-ORhEE9VVg', title: 'Taylor Swift — Blank Space' },
+// YouTube Playlists — each holds 100-200+ songs, totaling 1000+ tracks
+const PLAYLISTS = [
+  'PLDIoUOhQQPlXr63I_vwF9GD8sAKh77dWU',  // Popular Music Worldwide
+  'PLgzTt0k8mXzEk586SfGBUhIKMa1t2HBQN',  // Top Hits 2024-2025
+  'PLMC9KNkIncKtPzgY-5rmhvj7fax8fdxoj',  // Pop Music Playlist
+  'PLw-VjHDlEOgs658kAHR_LAaILBXb-s6Q5',  // Chill Vibes
+  'PLhsz9CILh357zA1yMKjMFMDv94qOidFgZ',  // Trending Global Hits
 ];
 
 function App() {
   const containerRef = useRef(null);
   const playerRef = useRef(null);
-  const [currentTrack, setCurrentTrack] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
   const [trackName, setTrackName] = useState('click to listen');
 
   // Load YouTube IFrame API
   useEffect(() => {
-    if (window.YT) {
+    if (window.YT && window.YT.Player) {
       initPlayer();
       return;
     }
@@ -61,16 +40,36 @@ function App() {
   }, []);
 
   const initPlayer = () => {
+    const randomPlaylist = PLAYLISTS[Math.floor(Math.random() * PLAYLISTS.length)];
     playerRef.current = new window.YT.Player('yt-player', {
       height: '0',
       width: '0',
-      videoId: TRACKS[0].id,
-      playerVars: { autoplay: 0, controls: 0 },
+      playerVars: {
+        autoplay: 0,
+        controls: 0,
+        listType: 'playlist',
+        list: randomPlaylist,
+      },
       events: {
-        onReady: () => setPlayerReady(true),
+        onReady: (event) => {
+          setPlayerReady(true);
+          event.target.setShuffle(true);
+        },
         onStateChange: (e) => {
-          if (e.data === window.YT.PlayerState.ENDED) {
-            nextTrack();
+          if (e.data === window.YT.PlayerState.PLAYING) {
+            try {
+              const videoData = e.target.getVideoData();
+              if (videoData && videoData.title) {
+                setTrackName(videoData.title);
+              }
+            } catch (err) {
+              setTrackName('now playing...');
+            }
+            setIsPlaying(true);
+          } else if (e.data === window.YT.PlayerState.ENDED) {
+            e.target.nextVideo();
+          } else if (e.data === window.YT.PlayerState.PAUSED) {
+            setIsPlaying(false);
           }
         }
       }
@@ -84,44 +83,35 @@ function App() {
       setIsPlaying(false);
       setTrackName('paused');
     } else {
-      playerRef.current.loadVideoById(TRACKS[currentTrack].id);
       playerRef.current.playVideo();
       setIsPlaying(true);
-      setTrackName(TRACKS[currentTrack].title);
     }
-  }, [isPlaying, currentTrack, playerReady]);
+  }, [isPlaying, playerReady]);
 
   const nextTrack = useCallback(() => {
-    const next = (currentTrack + 1) % TRACKS.length;
-    setCurrentTrack(next);
-    setTrackName(TRACKS[next].title);
-    if (playerRef.current && playerReady) {
-      playerRef.current.loadVideoById(TRACKS[next].id);
-      playerRef.current.playVideo();
-      setIsPlaying(true);
-    }
-  }, [currentTrack, playerReady]);
+    if (!playerRef.current || !playerReady) return;
+    playerRef.current.nextVideo();
+    setIsPlaying(true);
+  }, [playerReady]);
 
   const prevTrack = useCallback(() => {
-    const prev = (currentTrack - 1 + TRACKS.length) % TRACKS.length;
-    setCurrentTrack(prev);
-    setTrackName(TRACKS[prev].title);
-    if (playerRef.current && playerReady) {
-      playerRef.current.loadVideoById(TRACKS[prev].id);
-      playerRef.current.playVideo();
-      setIsPlaying(true);
-    }
-  }, [currentTrack, playerReady]);
+    if (!playerRef.current || !playerReady) return;
+    playerRef.current.previousVideo();
+    setIsPlaying(true);
+  }, [playerReady]);
 
   const shuffleTrack = useCallback(() => {
-    const rand = Math.floor(Math.random() * TRACKS.length);
-    setCurrentTrack(rand);
-    setTrackName(TRACKS[rand].title);
-    if (playerRef.current && playerReady) {
-      playerRef.current.loadVideoById(TRACKS[rand].id);
-      playerRef.current.playVideo();
-      setIsPlaying(true);
-    }
+    if (!playerRef.current || !playerReady) return;
+    const randomPlaylist = PLAYLISTS[Math.floor(Math.random() * PLAYLISTS.length)];
+    playerRef.current.loadPlaylist({
+      listType: 'playlist',
+      list: randomPlaylist,
+      index: Math.floor(Math.random() * 50),
+    });
+    setTimeout(() => {
+      if (playerRef.current) playerRef.current.setShuffle(true);
+    }, 1000);
+    setIsPlaying(true);
   }, [playerReady]);
 
   useGSAP(() => {
