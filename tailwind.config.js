@@ -7,22 +7,13 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['"Inter"', 'system-ui', 'sans-serif'], // Or 'San Francisco', Inter is a great alternative
+                mono: ['"JetBrains Mono"', 'monospace'],
             },
             colors: {
-                'bento-bg': '#f5f7fa',
-                'card-white': 'rgba(255, 255, 255, 0.9)',
-                'text-primary': '#1d1d1f',
-                'text-secondary': '#86868b',
-                // Card specifics
-                'card-purple': '#f3e8ff', // Vibe Coding
-                'card-pink': '#fae8ff',   // Framer
-                'card-peach': '#ffedd5',  // Insan
-                'card-gray': '#f3f4f6',   // Portfolio
+                // We'll rely mostly on default Tailwind greens (green-300, 400, 500)
             },
-            boxShadow: {
-                'bento': '0 10px 40px -10px rgba(0,0,0,0.05)',
-                'bento-hover': '0 20px 40px -10px rgba(0,0,0,0.1)',
+            dropShadow: {
+                'glow': '0 0 20px rgba(74, 222, 128, 0.6)',
             }
         },
     },
