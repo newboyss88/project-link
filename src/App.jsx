@@ -8,14 +8,37 @@ import RotatingTitle from './components/RotatingTitle';
 import profilePic from './assets/baralov.jpg';
 import './index.css';
 
-// YouTube Playlists — each holds 100-200+ songs, totaling 1000+ tracks
-const PLAYLISTS = [
-  'PLDIoUOhQQPlXr63I_vwF9GD8sAKh77dWU',  // Popular Music Worldwide
-  'PLgzTt0k8mXzEk586SfGBUhIKMa1t2HBQN',  // Top Hits 2024-2025
-  'PLMC9KNkIncKtPzgY-5rmhvj7fax8fdxoj',  // Pop Music Playlist
-  'PLw-VjHDlEOgs658kAHR_LAaILBXb-s6Q5',  // Chill Vibes
-  'PLhsz9CILh357zA1yMKjMFMDv94qOidFgZ',  // Trending Global Hits
+// Large pool of verified trending YouTube video IDs
+const ALL_TRACKS = [
+  'dQw4w9WgXcQ', 'kJQP7kiw5Fk', '60ItHLz5WEA', 'RgKAFK5djSk', 'JGwWNGJdvx8',
+  'fJ9rUzIMcZQ', 'hT_nvWreIhg', 'YQHsXMglC9A', 'CevxZvSJLk8', '09R8_2nJtjg',
+  'OPf0YbXqDm0', 'pRpeEdMmmQ0', 'hLQl3WQQoQ0', 'lp-EO5I60KA', '7wtfhZwyrcc',
+  'SlPhMPnQ58k', 'PT2_F-1esPk', 'gCYcHz2k5x0', 'IcrbM1l_BoI', 'bo_efYhYU2A',
+  'papuvlVeZg8', 'n1WpP7iowLc', 'W-TE_Ys4iwM', 'e-ORhEE9VVg', 'QYh6mYIJG2Y',
+  'RBumgq5yVrA', 'YykjpeuMNEk', 'DyDfgMOUjCI', '2Vv-BfVoq4g', 'hp2Dh5j0LF4',
+  'kXYiU_JCYtU', 'nfs8NYg7yQM', 'ru0K8uYEZWw', 'DK_0jXPuIr0', 'HCjNJDNzw8Y',
+  'rYEDA3JcQqw', 'PIh2xe4jnpk', 'bx1Bh8ZvH84', 'FuXNumBwDOM', 'k4V3Mo61fJM',
+  'KQ6zr6kCPj8', 'iS1g8G_njx8', 'qQzdAsjWGPg', '7PCkvCPvDXk', '1k8craCGpgs',
+  'XatXy6ZhKZw', 'izGwDsrQ1eQ', 'weeI1G46q0o', 'SosgVnSfFGY', 'AJtDXIazrMo',
+  'Pkh8UtuejGw', 'sOnqjkJTMaA', 'iPUmE-tne5U', 'hBkMHSMI3bQ', 'oYHy1bfbCgk',
+  'QcIy9NiNbmo', 'FrG4TEcSuRg', 'J_ub7Etch2U', 'YVw7eJ0vGfM', 'Zi_XLOBDo_Y',
+  'IxxstCcJlsc', 'k2qgadSvNyU', 'y6120QOlsfU', 'djV11Xbc914', 'uelHwf8o7_U',
+  'nSDgHBxUbVQ', '3tmd-ClpJxA', 'PVjiKRfKpPI', 'ghb6eDopW8I', 'aJOTlE1K90k',
+  'Qk52ypnGs68', 'kdemFfbS5H0', 'fLexgOxsZu0', 'LHvYrn3FAgI', 'xTlNMmZKwpA',
+  'psuRGfAaju4', 'PMivT7MJ41M', 'YBHQbu5rbdQ', 'YnwfTHpnGLY', '6Ejga4kJUts',
+  'LjhCEhWiKXk', 'p2rMOGLmZnM', 'MYSVMgRr6pw', '5IpYOF4Hi6Q', 'AM2Ivdi9c4E',
+  'ZmDBbnmKFnI', '450p7goxZqg', 'Lrle0x_DHBM', 'NUsoVlDFqZg', 'H5v3kku4y6Q',
 ];
+
+// Shuffle helper
+const shuffleArray = (arr) => {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+};
 
 function App() {
   const containerRef = useRef(null);
@@ -40,21 +63,13 @@ function App() {
   }, []);
 
   const initPlayer = () => {
-    const randomPlaylist = PLAYLISTS[Math.floor(Math.random() * PLAYLISTS.length)];
     playerRef.current = new window.YT.Player('yt-player', {
       height: '0',
       width: '0',
-      playerVars: {
-        autoplay: 0,
-        controls: 0,
-        listType: 'playlist',
-        list: randomPlaylist,
-      },
+      videoId: ALL_TRACKS[0],
+      playerVars: { autoplay: 0, controls: 0 },
       events: {
-        onReady: (event) => {
-          setPlayerReady(true);
-          event.target.setShuffle(true);
-        },
+        onReady: () => setPlayerReady(true),
         onStateChange: (e) => {
           if (e.data === window.YT.PlayerState.PLAYING) {
             try {
@@ -66,8 +81,6 @@ function App() {
               setTrackName('now playing...');
             }
             setIsPlaying(true);
-          } else if (e.data === window.YT.PlayerState.ENDED) {
-            e.target.nextVideo();
           } else if (e.data === window.YT.PlayerState.PAUSED) {
             setIsPlaying(false);
           }
@@ -76,6 +89,13 @@ function App() {
     });
   };
 
+  const startPlaylist = useCallback(() => {
+    if (!playerRef.current || !playerReady) return;
+    const shuffled = shuffleArray(ALL_TRACKS);
+    playerRef.current.loadPlaylist(shuffled, 0);
+    setIsPlaying(true);
+  }, [playerReady]);
+
   const togglePlay = useCallback(() => {
     if (!playerRef.current || !playerReady) return;
     if (isPlaying) {
@@ -83,10 +103,19 @@ function App() {
       setIsPlaying(false);
       setTrackName('paused');
     } else {
+      // If first time playing, load the full shuffled playlist
+      try {
+        const state = playerRef.current.getPlayerState();
+        if (state === -1 || state === 5) {
+          // Unstarted or cued — load full playlist
+          startPlaylist();
+          return;
+        }
+      } catch (e) { }
       playerRef.current.playVideo();
       setIsPlaying(true);
     }
-  }, [isPlaying, playerReady]);
+  }, [isPlaying, playerReady, startPlaylist]);
 
   const nextTrack = useCallback(() => {
     if (!playerRef.current || !playerReady) return;
@@ -102,17 +131,8 @@ function App() {
 
   const shuffleTrack = useCallback(() => {
     if (!playerRef.current || !playerReady) return;
-    const randomPlaylist = PLAYLISTS[Math.floor(Math.random() * PLAYLISTS.length)];
-    playerRef.current.loadPlaylist({
-      listType: 'playlist',
-      list: randomPlaylist,
-      index: Math.floor(Math.random() * 50),
-    });
-    setTimeout(() => {
-      if (playerRef.current) playerRef.current.setShuffle(true);
-    }, 1000);
-    setIsPlaying(true);
-  }, [playerReady]);
+    startPlaylist(); // Re-shuffle and restart
+  }, [playerReady, startPlaylist]);
 
   useGSAP(() => {
     gsap.from('.fade-in', {
